@@ -50,7 +50,7 @@
 		<!-- <httpcomponents.core.version>4.2.5</httpcomponents.core.version> -->
 		<httpcomponents.core.version>4.5.2</httpcomponents.core.version>
 		<libthrift.version>0.9.2</libthrift.version>
-		<zookeeper.version>3.4.6</zookeeper.version>
+		<zookeeper.version>3.4.14</zookeeper.version>
 		<curator.version>2.6.0</curator.version>
 		<!-- add by chance 2021年3月11日14点24分      end-->
 		<start-class>com.eversec.CommonModuleApplication</start-class>
