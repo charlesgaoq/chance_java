@@ -43,7 +43,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<!-- add by chance 2021年2021年3月11日14点24分      start-->
-		<hive.jdbc>1.1.0</hive.jdbc>
+		<hive.jdbc>2.3.3</hive.jdbc>
 		<commons-logging.version>1.1.3</commons-logging.version>
 		<!-- <httpcomponents.client.version>4.2.5</httpcomponents.client.version> -->
 		<httpcomponents.client.version>4.5.2</httpcomponents.client.version>
