@@ -1,0 +1,52 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>数据导入</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="">
+    <script type="text/javascript" src="../../js/jquery-1.11.1.min.js"></script>
+</head>
+<body>
+<form id="fm" action="/database-web/_eversec/_sdbimprt/imprtData"
+      method="post" enctype="multipart/form-data">
+    文件:<input type="file" id="pfile" name="pfile"
+              onchange="fun_check(this)"/><br> 集合空间:<input type="text"
+                                                           name="cs" id="cs"/><br> 集合:<input
+        type="text" name="cl"
+        id="cl"/><br> <input type="submit" value="submits"
+                             onclick="return fun_subimt();"/>
+</form>
+</body>
+<script language="javascript" type="text/javascript">
+    function fun_check(obj) {
+        var fileName = obj.value;
+        var index = fileName.lastIndexOf(".");
+        if (index == -1 || fileName.substr(index) != ".txt") {
+            obj.value = "";
+            alert("只能上传txt文件！")
+        }
+    }
+
+    function fun_subimt() {
+        var fileName = $("#pfile").val();
+        var cs = $("#cs").val();
+        var cl = $("#cl").val();
+        if (fileName == "") {
+            alert("请选择上传文件!");
+            return false;
+        } else if (cs == "") {
+            alert("请填写集合空间!");
+            $("#cs").focus();
+            return false;
+        } else if (cl == "") {
+            alert("请填写集合!");
+            $("#cl").focus();
+            return false;
+        }
+        return true;
+    }
+</script>
+</html>

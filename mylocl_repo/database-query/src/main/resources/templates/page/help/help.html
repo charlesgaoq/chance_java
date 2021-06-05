@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>帮助文档</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="author" content=""/>
+</head>
+<body>
+<h4>参数表</h4>
+<br>
+请求信息：http://localhost:8080/database-web/_eversec/_sequoiadb?cmd=query&cs=myCS&cl=myCL&command={...}
+<table border="1">
+    <tr>
+        <td>参数名</td>
+        <td>说明</td>
+        <td>示例</td>
+        <td>备注</td>
+    </tr>
+    <tr>
+        <td>cmd</td>
+        <td>query(查询）<br> aggregate（聚合查询）<span style="color: red">取消不可用</span><br>count（统计）<br>insert（插入）<br>update（修改）<br>remove（删除）<br>removeall(删除全部)
+        </td>
+        <td>cmd=query，不可以为空或空串</td>
+        <td>必须</td>
+    </tr>
+    <tr>
+        <td>cs</td>
+        <td>数据集合空间</td>
+        <td>cs=myCS，不可以为空或空串</td>
+        <td>必须</td>
+    </tr>
+    <tr>
+        <td>cl</td>
+        <td>数据集合</td>
+        <td>cl=myCL，不可以为空或空串</td>
+        <td>必须</td>
+    </tr>
+    <tr>
+        <td>command</td>
+        <td>命令集合信息</td>
+        <td>command={},参数见command参数表</td>
+        <td>可选</td>
+    </tr>
+</table>
+<br>
+返回信息：{"cmd":"","code":0,"total":0,"datas":[{...},{...},...],"exception":""}
+cmd:操作方式
+<br> code:0成功，其它值失败
+<br> total:请求为查询时，返回的数据数量
+<br> datas：请求返回值，对象数组
+<br> exception：异常错误信息，成功为空串
+<p>
+<h4>Command参数表</h4>
+<table border="1">
+    <tr>
+        <td>命令名</td>
+        <td>说明</td>
+        <td>示例</td>
+        <td>备注</td>
+    </tr>
+    <tr>
+        <td>selector</td>
+        <td>查询字段名</td>
+        <td>1.selector:{age:"",name:""};<br>
+            2.如无此参数则默认查询全部字段，不可以为空或空串(selector:{}/selector"");<br>
+            3.仅当cmd为aggregate时selector内的对象值可以作为别名使用例如：
+            selector:{name:"s_name",age:"s_age"}相当于name as s_name,age as s_age
+        </td>
+        <td>查询，聚合查询使用</td>
+    </tr>
+    <tr>
+        <td>matcher</td>
+        <td>查询条件</td>
+        <td>1.matcher:{age:10},其他条件配合<strong>匹配符</strong>使用，例如matcher:{age:{$gt:10}}，表示age>10;（见匹配符说明表）<br>
+            2.当cmd为aggregate时,条件对象字段必须出现在selector查询字段中，如果查询字段中设置了别名，那么matcher中的对象字段应和别名一致；<br>
+            3.如无条件限制不需要此参数，不可以为空或空串(matcher:{}/matcher"");
+        </td>
+        <td>查询，聚合查询，统计使用</td>
+    </tr>
+    <tr>
+        <td>limit</td>
+        <td>返回数据条数</td>
+        <td>1.limit:1000;<br> 2.如无此参数默认获得前10数据;<br>
+            3.一次查询最多不能超过1000条返回数据;
+        </td>
+        <td>查询，聚合查询使用</td>
+    </tr>
+    <tr>
+        <td>skip</td>
+        <td>返回数据起始位置</td>
+        <td>1.skip=5;<br> 2.如无此参数默认为起始位置0;
+        </td>
+        <td>查询，聚合查询使用</td>
+    </tr>
+    <tr>
+        <td>sort</td>
+        <td>排序,1/-1(正序/倒序)</td>
+        <td>1.sort:{age:1,source:-1}; 2.对象值，只能为1或者-1;</td>
+        <td>查询，聚合查询使用</td>
+    </tr>
+    <tr>
+        <td>group</td>
+        <td>分组字段，cmd=aggregate时启用</td>
+        <td>1.group:{count:{name:"count_name"},
+            sum:{age:"sum_age",source:"sum_source"}}<br>
+            &nbsp;&nbsp;&nbsp;group:{
+            <函数名>:{
+                <字段名1>:[别名1]},{
+                    <字段名2>:[别名2],...},<>:{<>:<>}}，如无别名默认为字段名;<br>
+                        &nbsp;&nbsp;&nbsp;<strong>注：如果在聚合查询中使用了别名，那么在matcher，sort中相应的字段也要使用别名</strong>
+                        </br>
+                        2.函数包括：count,sum,avg,max,min;<br>
+                        3.不可以为空或空串;
+        </td>
+        <td>聚合查询使用</td>
+    </tr>
+    <tr>
+        <td>datas</td>
+        <td>添加数据列表，cmd=insert时启用</td>
+        <td>datas:[{age:1,name:"xx",date:"20150202"},{age:1,name:"xx",date:"20150202"}]</td>
+        <td>一次最多10条数据</td>
+    </tr>
+    <tr>
+        <td>modifier</td>
+        <td>修改数据对象，cmd=update时启用</td>
+        <td>一.对象修改<br> &nbsp;&nbsp;&nbsp;&nbsp;{age:0,name:"li"}<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;1.modifier:{age:1,name:"wang"} sql:set age=1<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;2.modifier:{age:{$add:1}} sql:set age=age+1<br>
+            二.数组修改<br> &nbsp;&nbsp;&nbsp;&nbsp;{[{s:1},{s:3}]}<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;1.modifier:{ass.1.s:6} 执行后{[{s:1},{s:6}]}<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;2.modifier:{ass.1.s:{$add:2}}
+            执行后{[{s:1},{s:5}]}<br>
+        </td>
+        <td>修改时必填项</td>
+    </tr>
+    <tr>
+        <td>upsert</td>
+        <td>修改数据时是否启用upsert模式，cmd=update时启用</td>
+        <td>值为布尔值true/false，默认为false不启用！<br/>
+        </td>
+        <td>启用时：如修改的数据对象匹配不到，会结合修改条件和修改内容添加一个新数据文档！<br> 修改是选填项
+        </td>
+    </tr>
+    <tr>
+        <td>hint <span style="color: red">取消不可用</span></td>
+        <td>查询数据对象，cmd=query时启用,指定查询的索引名称</td>
+        <td>hint:{"":"index_name"}</td>
+        <td>查询数据时指定索引，key为空串，val为索引名(index_name)</td>
+    </tr>
+</table>
+<h4>条件匹配符：</h4>
+<table border="1">
+    <tr>
+        <td>符号</td>
+        <td>Sql示例</td>
+        <td>接口用法</td>
+        <td>备注</td>
+    </tr>
+    <tr>
+        <td>$gt</td>
+        <td>A >10</td>
+        <td>{A:{$gt:10}}</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>$gte</td>
+        <td>A >=10</td>
+        <td>{A:{$gte:10}}</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>$lt</td>
+        <td>A <10</td>
+        <td>{A:{$lt:10}}</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>$lte</td>
+        <td>A <=10</td>
+        <td>{A:{$lte:10}}</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>$ne</td>
+        <td>A !=10</td>
+        <td>{A:{$ne:10}}</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>$et<span style="color: red">取消不可用</span></td>
+        <td>A =10</td>
+        <td>{A:{$et:10}}</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>$in</td>
+        <td>A in (1,2,3,4)</td>
+        <td>{A:{$in:[1,2,3,4]}}</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>$regex</td>
+        <td>A like '%1%'</td>
+        <td>{A:{$regex:".*1.*"}}</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>$isnull<span style="color: red">取消不可用</span></td>
+        <td>A is null<br>A is not null
+        </td>
+        <td>{A:{$isnull:1}}<br>{A:{$isnull:0}}
+        </td>
+        <td>1:参数为空；<br>0:参数不为空；
+        </td>
+    </tr>
+    <tr>
+        <td>$nin</td>
+        <td>A not in (1,2,3,4)</td>
+        <td>{A:{$nin:[1,2,3,4]}}</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>$and</td>
+        <td>A = 1 and B = 2</td>
+        <td>{$and:[{A:1},{B:2}]}</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>$or</td>
+        <td>A = 1 or B = 2</td>
+        <td>{$or:[{A:1},{B:2}]}</td>
+        <td></td>
+    </tr>
+</table>
+<h4>更新符：</h4>
+<table border="1">
+    <tr>
+        <td>符号</td>
+        <td>Sql示例</td>
+        <td>接口用法</td>
+        <td>备注</td>
+    </tr>
+    <tr>
+        <td>$add</td>
+        <td>A=A+10</td>
+        <td>{A:{$add:10}}</td>
+        <td></td>
+    </tr>
+</table>
+</body>
+</html>
